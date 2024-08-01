@@ -56,9 +56,9 @@ class User < ApplicationRecord
 
   # User#discover: returns rows from the photos table associated to this user through its leaders (the leaders' liked_photos)
 
-belongs_to(:comments, 
-  class_name:"Comment",
-  foreign_key:"author_id"
+  has_many(:comments, 
+    class_name:"Comment",
+    foreign_key:"author_id"
   )
   # def comments
   #   my_id = self.id
@@ -68,7 +68,7 @@ belongs_to(:comments,
   #   return matching_comments
   # end
 
-  belongs_to(:own_photos, 
+  has_many(:own_photos, 
   class_name:"Photo",
   foreign_key:"owner_id"
   )
@@ -80,7 +80,7 @@ belongs_to(:comments,
   #   return matching_photos
   # end
 
-  belongs_to(:likes, 
+  has_many(:likes, 
   class_name:"Like",
   foreign_key:"fan_id"
   )
@@ -93,35 +93,45 @@ belongs_to(:comments,
   #   return matching_likes
   # end
 
-  def liked_photos
-    my_likes = self.likes
+  has_many(:liked_photos,
+    through: :likes,
+    source: :photo
+  )
+  # def liked_photos
+  #   my_likes = self.likes
     
-    array_of_photo_ids = Array.new
+  #   array_of_photo_ids = Array.new
 
-    my_likes.each do |a_like|
-      array_of_photo_ids.push(a_like.photo_id)
-    end
+  #   my_likes.each do |a_like|
+  #     array_of_photo_ids.push(a_like.photo_id)
+  #   end
 
-    matching_photos = Photo.where({ :id => array_of_photo_ids })
+  #   matching_photos = Photo.where({ :id => array_of_photo_ids })
 
-    return matching_photos
-  end
+  #   return matching_photos
+  # end
 
-  def commented_photos
-    my_comments = self.comments
+  has_many(:commented_photos,
+  through: :comments,
+  source: :photo
+  )
+
+
+  # def commented_photos
+  #   my_comments = self.comments
     
-    array_of_photo_ids = Array.new
+  #   array_of_photo_ids = Array.new
 
-    my_comments.each do |a_comment|
-      array_of_photo_ids.push(a_comment.photo_id)
-    end
+  #   my_comments.each do |a_comment|
+  #     array_of_photo_ids.push(a_comment.photo_id)
+  #   end
 
-    matching_photos = Photo.where({ :id => array_of_photo_ids })
+  #   matching_photos = Photo.where({ :id => array_of_photo_ids })
 
-    unique_matching_photos = matching_photos.distinct
+  #   unique_matching_photos = matching_photos.distinct
 
-    return unique_matching_photos
-  end
+  #   return unique_matching_photos
+  # end
 
   def sent_follow_requests
     my_id = self.id

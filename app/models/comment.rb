@@ -26,6 +26,11 @@ class Comment < ApplicationRecord
     foreign_key: "author_id"
   )
 
+  belongs_to(:photo,
+  class_name: "Photo",
+  foreign_key: "photo_id"
+)
+
   # def commenter
   #   my_author_id = self.author_id
 
